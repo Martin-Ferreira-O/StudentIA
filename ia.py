@@ -1,10 +1,11 @@
 from openai import OpenAI
-
+import os
 class Resumen:
     def __init__(self):
+        # USar variables de entorno
         self.client = OpenAI(
-            api_key="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",
-            base_url="https://openrouter.ai/api/v1"
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url=os.getenv("OPENAI_BASE_URL")
         )
 
     def read_files(self, path = "clase1.txt"):
