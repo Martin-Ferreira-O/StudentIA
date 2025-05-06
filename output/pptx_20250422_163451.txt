@@ -1,0 +1,177 @@
+ANÁLISIS Y MODELAMIENTO DE SISTEMAS
+Docente: Magdalena Nieto  año 2025
+Semana-06
+Análisis y Modelamiento de Sistemas
+2
+Resultado de aprendizaje: Aplica técnicas de modelamiento para el desarrollo de requisitos del cliente y del producto, buscando soluciones pertinentes, y comunicándolas efectivamente.
+
+Contenidos: 
+2.1. Técnicas de elicitación de requerimientos.
+2.2. Requerimientos funcionales y no funcionales.
+2.3. Modelamiento de Casos de Uso e Historias de Usuario
+2.4. Especificación de Casos de Uso y Tarjetas de Historias de Usuario.
+2.5. Herramientas de Prototipado de Interfaces Gráficas de Usuario.
+.
+
+Unidad 2: Ingeniería de Requerimientos
+Análisis y Modelamiento de Sistemas
+3
+Resultado de aprendizaje: Aplica técnicas de modelamiento para el desarrollo de requisitos del cliente y del producto, buscando soluciones pertinentes, y comunicándolas efectivamente.
+Contenidos: Técnicas de elicitación de requerimientos. Requerimientos funcionales y no funcionales. Modelamiento de Casos de Uso e Historias de Usuario. Especificación de Casos de Uso y Tarjetas de Historias de Usuario. Herramientas de Prototipado de Interfaces Gráficas de Usuario.
+.
+
+Unidad 2: Ingeniería de Requerimientos
+Análisis y Modelamiento de Sistemas
+4
+Descripción del ciclo de vida de los proyectos con Scrum
+5
+ Fuente: https://wiki.beaware360.com/doku.php?id=marcodetrabajoim  
+Análisis y Modelamiento de Sistemas
+6
+Ingeniería de Requerimientos
+El Usuario sabe lo que quiere no cuando lo ve sino cuando 
+lo usa
+
+
+Doctor Javier Garzás
+Análisis y Modelamiento de Sistemas
+7
+¿Qué es una Historia de Usuario?
+Una descripción simple de funcionalidad desde la perspectiva del usuario final.
+Sigue el formato: "Como [usuario], quiero [objetivo], para [beneficio]".
+Reemplaza los documentos de requisitos tradicionales.
+Se enfoca en el valor de negocio real.
+8
+Criterios INVEST para Historias de Calidad
+1
+Testeable
+Verificable mediante pruebas concretas
+
+2
+Small/Pequeña
+Completable en un solo sprint
+
+3
+Estimable
+Tamaño evaluable por el equipo
+
+4
+Valiosa
+Aporta beneficio al usuario o negocio
+
+5
+Negociable
+Flexible en su implementación
+
+6
+Independiente
+Minimiza dependencias con otras historias
+
+Errores a evitar
+Historias demasiado técnicas
+Confundir historias con tareas
+Dependencias excesivas
+Criterios vagos o subjetivos
+
+Mejores prácticas
+Involucrar al Product Owner
+Sesiones de refinamiento regulares
+Documentar decisiones importantes
+Mantener el enfoque en el usuario
+Análisis y Modelamiento de Sistemas
+9
+Errores Comunes y 
+Mejores Prácticas
+Retrospectiva del Sprint: Análisis Completo
+Bienvenidos a nuestra retrospectiva de sprint. Analizaremos resultados, celebraremos logros y planificaremos mejoras para el próximo ciclo.
+GN
+10
+Análisis y Modelamiento de Sistemas
+Resumen de Métricas del Sprint
+35
+Puntos de Historia
+Total completado en este sprint
+92%
+Historias Completadas
+Tasa de finalización exitosa
+3
+Historias Pendientes
+Trasladadas al próximo sprint
++15%
+Mejora de Eficiencia
+Comparado con el sprint anterior
+11
+Análisis y Modelamiento de Sistemas
+Logros Destacados
+
+Nueva Seguridad
+Implementación exitosa de funcionalidades de seguridad críticas para la plataforma.
+
+Rendimiento Mejorado
+Reducción del tiempo de carga en un 40% mediante optimización de código.
+
+Integración Completada
+Finalización de la integración de microservicios según lo planificado.
+
+Mejor Cobertura
+Aumento del 15% en cobertura de pruebas automatizadas.
+12
+Análisis y Modelamiento de Sistemas
+Desafíos Identificados
+Revisión de Código
+Cuellos de botella en el proceso
+
+Comunicación
+Requiere optimización entre equipos
+
+Estimaciones
+Inexactas en 2 historias clave
+
+Capacitación
+Necesaria para nuevas tecnologías
+13
+Análisis y Modelamiento de Sistemas
+Feedback del Equipo
+La encuesta revela áreas específicas para mejorar. Necesitamos enfocarnos en herramientas y procesos.
+14
+Análisis y Modelamiento de Sistemas
+Plan de Mejora Continua
+Revisiones Ágiles
+Implementar procesos más eficientes para revisión de código.
+Pair Programming
+Introducir sesiones semanales para compartir conocimiento.
+Actualizar Herramientas
+Mejorar nuestro sistema de gestión de proyectos.
+Capacitación Técnica
+Programar talleres mensuales sobre nuevas tecnologías.
+15
+Análisis y Modelamiento de Sistemas
+Objetivos para el Próximo Sprint
+Completar Pendientes
+Finalizar las 3 historias de usuario que quedaron incompletas.
+Reducir Tiempos
+Disminuir tiempo de revisión de código en un 30%.
+Aumentar Cobertura
+Alcanzar 85% en pruebas automatizadas para todo el sistema.
+Optimizar Integración
+Mejorar procesos de integración continua y despliegue.
+16
+Análisis y Modelamiento de Sistemas
+Conclusiones y Próximos Pasos
+
+Celebrar Logros
+Reconocer el esfuerzo y los resultados obtenidos por todo el equipo.
+
+Compromisos de Mejora
+Cada miembro establecerá objetivos personales para el próximo sprint.
+
+Enfoque en Calidad
+Priorizar la eficiencia y calidad en todas nuestras entregas.
+
+Evaluación Continua
+Monitorear nuestro progreso en la próxima retrospectiva.
+17
+Análisis y Modelamiento de Sistemas
+
+Análisis y Modelamiento de Sistemas
+18
