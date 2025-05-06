@@ -13,10 +13,27 @@ document.addEventListener('DOMContentLoaded', function() {
   const tabContents = document.querySelectorAll('.tab-content');
   const editButton = document.getElementById('edit-button');
   const saveButton = document.getElementById('save-button');
+  const generarMapaToggle = document.getElementById('generar_mapa');
+  const resultadoTab = document.getElementById('resultado-tab');
+  const resumenTab = document.getElementById('resumen-tab');
+  const mapaTab = document.getElementById('mapa-tab');
+  const quizTab = document.getElementById('quiz-tab');
+  const quizContent = document.getElementById('quiz-content');
+  const quizContainer = document.getElementById('quiz-container');
+  const outputRadios = document.querySelectorAll('input[name="salida"]');
   
   // Variables para el contenido del resumen
   let resumenOriginal = '';
   let resumenEditado = '';
+  let esMapa = false;
+  
+  // Inicializar Mermaid
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: document.body.classList.contains('dark-mode') ? 'dark' : 'default',
+    securityLevel: 'loose',
+    fontSize: 16
+  });
   
   // Configuración de marked.js para procesar Markdown
   marked.setOptions({
@@ -46,10 +63,12 @@ document.addEventListener('DOMContentLoaded', function() {
       icon.classList.remove('fa-moon');
       icon.classList.add('fa-sun');
       localStorage.setItem('theme', 'dark');
+      mermaid.initialize({ theme: 'dark' });
     } else {
       icon.classList.remove('fa-sun');
       icon.classList.add('fa-moon');
       localStorage.setItem('theme', 'light');
+      mermaid.initialize({ theme: 'default' });
     }
   });
   
@@ -60,6 +79,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const icon = themeToggle.querySelector('i');
     icon.classList.remove('fa-moon');
     icon.classList.add('fa-sun');
+  }
+  
+  // Actualizar texto del botón de resultado según la selección
+  if (generarMapaToggle) {
+    generarMapaToggle.addEventListener('change', function() {
+      if (this.checked) {
+        resultadoTab.textContent = 'Mapa Conceptual';
+        esMapa = true;
+      } else {
+        resultadoTab.textContent = 'Resumen IA';
+        esMapa = false;
+      }
+    });
   }
   
   // Cambiar visualización cuando se selecciona un archivo
@@ -375,67 +407,113 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  // Mostrar/ocultar pestañas según selección
+  function actualizarPestanas() {
+    let salida = document.querySelector('input[name="salida"]:checked').value;
+    // Ocultar todas
+    resumenTab.style.display = 'none';
+    mapaTab.style.display = 'none';
+    quizTab.style.display = 'none';
+    document.getElementById('resumen-content').style.display = 'none';
+    document.getElementById('mapa-content').style.display = 'none';
+    quizContent.style.display = 'none';
+    // Mostrar solo la seleccionada
+    if (salida === 'resumen') {
+      resumenTab.style.display = '';
+      resumenTab.classList.add('active');
+      mapaTab.classList.remove('active');
+      quizTab.classList.remove('active');
+      document.getElementById('resumen-content').style.display = '';
+      document.getElementById('resumen-content').classList.add('active');
+      document.getElementById('mapa-content').classList.remove('active');
+      quizContent.classList.remove('active');
+    } else if (salida === 'mapa') {
+      mapaTab.style.display = '';
+      mapaTab.classList.add('active');
+      resumenTab.classList.remove('active');
+      quizTab.classList.remove('active');
+      document.getElementById('mapa-content').style.display = '';
+      document.getElementById('mapa-content').classList.add('active');
+      document.getElementById('resumen-content').classList.remove('active');
+      quizContent.classList.remove('active');
+    } else if (salida === 'quiz') {
+      quizTab.style.display = '';
+      quizTab.classList.add('active');
+      resumenTab.classList.remove('active');
+      mapaTab.classList.remove('active');
+      quizContent.style.display = '';
+      quizContent.classList.add('active');
+      document.getElementById('resumen-content').classList.remove('active');
+      document.getElementById('mapa-content').classList.remove('active');
+    }
+  }
+  outputRadios.forEach(rb => rb.addEventListener('change', actualizarPestanas));
+  document.addEventListener('DOMContentLoaded', actualizarPestanas);
+  
   // Manejar envío del formulario
   uploadForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    
-    if (fileInput.files.length === 0) {
-      alert('Por favor selecciona un archivo.');
-      return;
-    }
-    
-    // Ocultar formulario y mostrar pantalla de carga
-    uploadForm.classList.add('hidden');
-    loaderContainer.style.display = 'block';
-    
-    // Después de 2 segundos, mostrar la animación de IA procesando
-    setTimeout(() => {
+    const formData = new FormData(this);
+    // Solo una salida
+    const salida = document.querySelector('input[name="salida"]:checked').value;
+    formData.append('salida', salida);
+    // Mostrar pantalla de carga
+    uploadForm.style.display = 'none';
+    loaderContainer.style.display = 'flex';
+    fetch('/', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
       loaderContainer.style.display = 'none';
-      aiLoader.style.display = 'block';
-      
-      const formData = new FormData(uploadForm);
-      
-      fetch('/', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Error en la respuesta del servidor');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Ocultar loaders y mostrar resultados
+      aiLoader.style.display = 'flex';
+      setTimeout(() => {
         aiLoader.style.display = 'none';
         resultadoContainer.style.display = 'block';
-        
-        // Renderizar contenido
-        const textoContainer = document.getElementById('texto-content');
-        const resumenContainer = document.getElementById('resumen-content');
-        
-        renderText(textoContainer, data.texto, false);
-        renderText(resumenContainer, data.resumen, true);
-        
-        // Guardar versión original del resumen
-        resumenOriginal = data.resumen;
-        
-        // Activar primera pestaña por defecto
-        document.querySelector('.tab-button').click();
-        
-        // Mostrar botones de edición
-        if (editButton) {
-          editButton.classList.remove('hidden');
+        renderText(document.getElementById('texto-content'), data.texto);
+        // Mostrar solo la pestaña seleccionada
+        if (data.resumen) {
+          resumenTab.style.display = '';
+          renderText(document.getElementById('resumen-content'), data.resumen, true);
+          document.getElementById('resumen-raw').textContent = data.resumen;
+        } else {
+          resumenTab.style.display = 'none';
         }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        aiLoader.style.display = 'none';
-        alert('Ha ocurrido un error. Por favor intenta de nuevo.');
-        uploadForm.classList.remove('hidden');
-      });
-    }, 2000);
+        if (data.mapa_conceptual) {
+          mapaTab.style.display = '';
+          renderMermaidDiagram(document.getElementById('mapa-content'), data.mapa_conceptual);
+          document.getElementById('resumen-raw').textContent = data.mapa_conceptual;
+        } else {
+          mapaTab.style.display = 'none';
+        }
+        if (data.quiz) {
+          quizTab.style.display = '';
+          renderQuiz(data.quiz);
+        } else {
+          quizTab.style.display = 'none';
+          quizContainer.innerHTML = '';
+        }
+        actualizarPestanas();
+      }, 2000);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      loaderContainer.style.display = 'none';
+      alert('Ocurrió un error al procesar el archivo. Por favor, inténtalo de nuevo.');
+      uploadForm.style.display = 'block';
+    });
   });
+  
+  function renderQuiz(quizText) {
+    // Intentar parsear como Markdown, o mostrar como texto plano
+    quizContainer.innerHTML = '';
+    // Si el quiz viene en formato Markdown, mostrarlo bonito
+    const div = document.createElement('div');
+    div.className = 'markdown-content';
+    div.innerHTML = marked.parse(quizText);
+    quizContainer.appendChild(div);
+  }
   
   // Crear la animación del loader de IA
   function inicializarAILoader() {
@@ -485,5 +563,53 @@ document.addEventListener('DOMContentLoaded', function() {
       activeNodeIndex = (activeNodeIndex + 1) % (numNodes - 2) + 1;
       nodes[activeNodeIndex].classList.add('pulse');
     }, 600);
+  }
+  
+  function renderMermaidDiagram(container, mermaidCode) {
+    // Limpiar el contenedor actual
+    container.querySelectorAll(':not(button):not(.copy-button):not(.tab-actions):not(#resumen-raw):not(.hidden)').forEach(el => el.remove());
+    
+    // Crear contenedor para el diagrama
+    const mermaidContainer = document.getElementById('mermaid-diagram');
+    mermaidContainer.innerHTML = '';
+    
+    // Extraer el código Mermaid de la respuesta
+    const mermaidDefinition = extractMermaidCode(mermaidCode);
+    
+    if (mermaidDefinition) {
+      try {
+        mermaid.render('mermaid-diagram-svg', mermaidDefinition).then(result => {
+          mermaidContainer.innerHTML = result.svg;
+        });
+      } catch (error) {
+        console.error('Error al renderizar el diagrama Mermaid:', error);
+        mermaidContainer.innerHTML = '<div class="error-message">Error al generar el diagrama. Por favor, intenta de nuevo.</div>';
+      }
+    } else {
+      // Si no se encontró código Mermaid válido, mostrar el texto plano
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'markdown-content';
+      contentDiv.innerHTML = marked.parse(mermaidCode);
+      container.appendChild(contentDiv);
+    }
+  }
+  
+  function extractMermaidCode(text) {
+    // Buscar código Mermaid dentro de bloques de código
+    const mermaidRegex = /```(?:mermaid)?\s*([\s\S]*?)```/g;
+    const matches = [...text.matchAll(mermaidRegex)];
+    
+    if (matches.length > 0) {
+      return matches[0][1].trim();
+    }
+    
+    // Si no hay bloques de código, verificar si todo el texto es código Mermaid
+    if (text.trim().startsWith('graph') || text.trim().startsWith('flowchart') || 
+        text.trim().startsWith('sequenceDiagram') || text.trim().startsWith('classDiagram') ||
+        text.trim().startsWith('mindmap')) {
+      return text.trim();
+    }
+    
+    return null;
   }
 });

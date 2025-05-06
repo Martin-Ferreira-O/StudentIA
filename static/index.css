@@ -191,6 +191,8 @@ header {
 
 .dropdown {
   width: 100%;
+  flex: 1;
+  min-width: 200px;
   padding: 0.75rem 1rem;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -791,4 +793,197 @@ header {
     opacity: 0;
     transform: translate(-50%, -20px);
   }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--light-text);
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.dark-mode .login-link {
+  color: var(--dark-text);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.login-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.dark-mode .login-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.form-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  align-items: center;
+}
+
+.output-type {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.output-label {
+  font-weight: 500;
+  color: var(--light-text);
+}
+
+.dark-mode .output-label {
+  color: var(--dark-text);
+}
+
+.toggle-container {
+  position: relative;
+  width: 240px;
+}
+
+.toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.dark-mode .toggle-label {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.toggle-option {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--light-text);
+  z-index: 1;
+  padding: 0 8px;
+  transition: all 0.3s;
+}
+
+.dark-mode .toggle-option {
+  color: var(--dark-text);
+}
+
+.toggle-slider {
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  height: calc(100% - 8px);
+  width: 120px;
+  background-color: var(--primary-color);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.toggle-input:checked + .toggle-label .toggle-slider {
+  left: calc(100% - 124px);
+  background-color: var(--secondary-color);
+}
+
+.toggle-input:checked + .toggle-label .toggle-option:first-child {
+  color: var(--dark-text);
+}
+
+.toggle-input:not(:checked) + .toggle-label .toggle-option:last-child {
+  color: var(--dark-text);
+}
+
+.mermaid-container {
+  width: 100%;
+  overflow: auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+.dark-mode .mermaid-container {
+  background-color: #2a2a2a;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mermaid-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Estilos específicos para diagramas Mermaid en modo oscuro */
+.dark-mode .mermaid-container .label {
+  color: #e0e0e0;
+  fill: #e0e0e0;
+}
+
+.dark-mode .mermaid-container .node rect,
+.dark-mode .mermaid-container .node circle,
+.dark-mode .mermaid-container .node polygon,
+.dark-mode .mermaid-container .node path {
+  fill: #3a3a3a;
+  stroke: #555;
+}
+
+.dark-mode .mermaid-container .edgeLabel {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+}
+
+.dark-mode .mermaid-container .cluster rect {
+  fill: #2a2a2a;
+  stroke: #555;
+}
+
+.output-options {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.output-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: rgba(0,0,0,0.04);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.output-options label:hover {
+  background: rgba(58,134,255,0.08);
+}
+
+.output-options input[type="radio"] {
+  accent-color: var(--primary-color);
+  width: 18px;
+  height: 18px;
 }

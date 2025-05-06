@@ -3,7 +3,6 @@ import os
 from flask import Flask, request, render_template, jsonify
 from pptx import Presentation
 import whisper
-import numpy as np
 from datetime import datetime
 
 from ia import Resumen
@@ -65,6 +64,7 @@ def index():
     if request.method == "POST":
         archivo = request.files["archivo"]
         tipo_archivo = request.form.get("tipo_archivo")
+        salidas = request.form.getlist("salida")
                 
         if tipo_archivo == "pptx":
             # Guardar archivo temporalmente
@@ -87,11 +87,25 @@ def index():
         else:
             return jsonify({"error": "Tipo de archivo no soportado"}), 400
 
+        resultado = {"texto": texto}
         
+        if "resumen" in salidas:
+            resultado["resumen"] = resumen.send_resume()
+        if "mapa" in salidas:
+            mapa = resumen.generate_concept_map()
+            print("\n--- CÓDIGO MERMAID GENERADO ---\n", mapa, "\n------------------------------\n")
+            resultado["mapa_conceptual"] = mapa
+        if "quiz" in salidas:
+            quiz = resumen.generate_quiz()
+            resultado["quiz"] = quiz
 
-        return jsonify({"texto": texto, "resumen": resumen.send_resume()})
+        return jsonify(resultado)
 
     return render_template("index.html")
+
+@app.route("/login", methods=["GET"])
+def login():
+    return render_template("login.html")
 
 if __name__ == "__main__":
     if not os.path.exists("temp"):

@@ -11,6 +11,8 @@
     <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/atom-one-dark.min.css">
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/highlight.min.js"></script>
+    <!-- Mermaid.js para mapas conceptuales -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -21,10 +23,16 @@
                 </svg>
                 <h1>Student IA</h1>
             </div>
-            <button id="theme-toggle" class="theme-toggle">
-                <i class="fas fa-moon"></i>
-                <span>Tema</span>
-            </button>
+            <div class="header-actions">
+                <a href="/login" class="login-link">
+                    <i class="fas fa-user"></i>
+                    <span>Iniciar sesión</span>
+                </a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Tema</span>
+                </button>
+            </div>
         </header>
 
         <div class="card">
@@ -37,13 +45,32 @@
                     <div id="file-name" class="file-name"></div>
                 </div>
                 
-                <select name="tipo_archivo" id="tipo_archivo" class="dropdown">
-                    <option value="pptx">Presentación PowerPoint</option>
-                    <option value="audio">Archivo de Audio</option>
-                </select>
+                <div class="form-options">
+                    <select name="tipo_archivo" id="tipo_archivo" class="dropdown">
+                        <option value="pptx">Presentación PowerPoint</option>
+                        <option value="audio">Archivo de Audio</option>
+                    </select>
+                    <div class="output-type">
+                        <label class="output-label">¿Qué deseas generar?</label>
+                        <div class="output-options">
+                            <label>
+                                <input type="radio" name="salida" value="resumen" checked>
+                                Resumen
+                            </label>
+                            <label>
+                                <input type="radio" name="salida" value="mapa">
+                                Mapa Conceptual
+                            </label>
+                            <label>
+                                <input type="radio" name="salida" value="quiz">
+                                Quiz
+                            </label>
+                        </div>
+                    </div>
+                </div>
                 
                 <button type="submit" id="submit-button" class="button" disabled>
-                    <i class="fas fa-brain"></i> Generar Resumen
+                    <i class="fas fa-brain"></i> Generar
                 </button>
             </form>
 
@@ -56,14 +83,16 @@
             <!-- Animación de IA procesando -->
             <div id="ai-loader" class="ai-loader">
                 <!-- Los nodos y conexiones se generan con JavaScript -->
-                <p class="loader-text">Generando resumen con IA...</p>
+                <p class="loader-text">Generando con IA...</p>
             </div>
 
             <!-- Contenedor de resultados -->
             <div id="resultado-container" class="resultado-container">
                 <div class="tab-buttons">
                     <button class="tab-button active" data-target="texto-content">Texto Original</button>
-                    <button class="tab-button" data-target="resumen-content">Resumen IA</button>
+                    <button class="tab-button" id="resumen-tab" data-target="resumen-content">Resumen IA</button>
+                    <button class="tab-button" id="mapa-tab" data-target="mapa-content" style="display:none;">Mapa Conceptual</button>
+                    <button class="tab-button" id="quiz-tab" data-target="quiz-content" style="display:none;">Quiz</button>
                 </div>
                 
                 <div id="texto-content" class="tab-content active">
@@ -88,6 +117,14 @@
                         </button>
                     </div>
                     <pre id="resumen-raw" class="hidden"></pre>
+                </div>
+                
+                <div id="mapa-content" class="tab-content">
+                    <div id="mermaid-diagram" class="mermaid-container"></div>
+                </div>
+                
+                <div id="quiz-content" class="tab-content">
+                    <div id="quiz-container"></div>
                 </div>
             </div>
         </div>
