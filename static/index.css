@@ -918,22 +918,36 @@ header {
 
 .mermaid-container {
   width: 100%;
-  overflow: auto;
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+  overflow-x: auto;
+  background-color: #23272f;
+  padding: 32px 24px;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
 }
 
 .dark-mode .mermaid-container {
-  background-color: #2a2a2a;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background-color: #23272f;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
 }
 
 .mermaid-container svg {
   max-width: 100%;
   height: auto;
+  min-width: 600px;
+  min-height: 120px;
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .mermaid-container svg {
+    min-width: 400px;
+  }
 }
 
 /* Estilos específicos para diagramas Mermaid en modo oscuro */
@@ -986,4 +1000,27 @@ header {
   accent-color: var(--primary-color);
   width: 18px;
   height: 18px;
+}
+
+.mermaid-container .label {
+  fill: #e0e0e0 !important;
+  font-size: 1.3em !important;
+}
+
+.mermaid-container .node rect,
+.mermaid-container .node polygon,
+.mermaid-container .node ellipse {
+  stroke-width: 2px !important;
+  rx: 8px !important;
+  ry: 8px !important;
+}
+
+.mermaid-container .edgeLabel {
+  background: #23272f !important;
+  fill: #e0e0e0 !important;
+  font-size: 1.1em !important;
+}
+
+.mermaid-container svg {
+  font-size: 1.2em !important;
 }

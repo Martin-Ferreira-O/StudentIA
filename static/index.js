@@ -567,49 +567,58 @@ document.addEventListener('DOMContentLoaded', function() {
   
   function renderMermaidDiagram(container, mermaidCode) {
     // Limpiar el contenedor actual
-    container.querySelectorAll(':not(button):not(.copy-button):not(.tab-actions):not(#resumen-raw):not(.hidden)').forEach(el => el.remove());
-    
-    // Crear contenedor para el diagrama
     const mermaidContainer = document.getElementById('mermaid-diagram');
     mermaidContainer.innerHTML = '';
-    
-    // Extraer el código Mermaid de la respuesta
-    const mermaidDefinition = extractMermaidCode(mermaidCode);
-    
-    if (mermaidDefinition) {
+
+    // Eliminar botón de descarga anterior si existe
+    let prevBtn = document.getElementById('download-mermaid-btn');
+    if (prevBtn) prevBtn.remove();
+
+    // Extraer el código Mermaid puro
+    let code = mermaidCode.trim();
+
+    // Si por error viene con ```mermaid ... ```, extráelo
+    if (code.startsWith('```')) {
+      const match = code.match(/```(?:mermaid)?\s*([\s\S]*?)```/);
+      if (match) code = match[1].trim();
+    }
+
+    // Si el código parece válido (empieza con graph, flowchart, etc.)
+    if (/^(graph|flowchart|sequenceDiagram|classDiagram|mindmap)/.test(code)) {
       try {
-        mermaid.render('mermaid-diagram-svg', mermaidDefinition).then(result => {
-          mermaidContainer.innerHTML = result.svg;
+        mermaid.render('mermaid-diagram-svg', code).then(result => {
+          mermaidContainer.innerHTML = '';
+          // SVG
+          const svgDiv = document.createElement('div');
+          svgDiv.innerHTML = result.svg;
+          mermaidContainer.appendChild(svgDiv);
+          // Botón de descarga fuera del contenedor
+          const downloadBtn = document.createElement('button');
+          downloadBtn.textContent = 'Descargar SVG';
+          downloadBtn.className = 'button';
+          downloadBtn.id = 'download-mermaid-btn';
+          downloadBtn.style.marginBottom = '16px';
+          downloadBtn.style.float = 'right';
+          // Insertar el botón antes del contenedor
+          mermaidContainer.parentElement.insertBefore(downloadBtn, mermaidContainer);
+          downloadBtn.onclick = function() {
+            const blob = new Blob([result.svg], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'mapa_conceptual.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          };
         });
       } catch (error) {
         console.error('Error al renderizar el diagrama Mermaid:', error);
         mermaidContainer.innerHTML = '<div class="error-message">Error al generar el diagrama. Por favor, intenta de nuevo.</div>';
       }
     } else {
-      // Si no se encontró código Mermaid válido, mostrar el texto plano
-      const contentDiv = document.createElement('div');
-      contentDiv.className = 'markdown-content';
-      contentDiv.innerHTML = marked.parse(mermaidCode);
-      container.appendChild(contentDiv);
+      mermaidContainer.innerHTML = '<div class="error-message">El código Mermaid recibido no es válido.</div>';
     }
-  }
-  
-  function extractMermaidCode(text) {
-    // Buscar código Mermaid dentro de bloques de código
-    const mermaidRegex = /```(?:mermaid)?\s*([\s\S]*?)```/g;
-    const matches = [...text.matchAll(mermaidRegex)];
-    
-    if (matches.length > 0) {
-      return matches[0][1].trim();
-    }
-    
-    // Si no hay bloques de código, verificar si todo el texto es código Mermaid
-    if (text.trim().startsWith('graph') || text.trim().startsWith('flowchart') || 
-        text.trim().startsWith('sequenceDiagram') || text.trim().startsWith('classDiagram') ||
-        text.trim().startsWith('mindmap')) {
-      return text.trim();
-    }
-    
-    return null;
   }
 });
