@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student IA - Iniciar Sesión</title>
+    <title>Student IA - Registro</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -19,19 +19,25 @@
                     </svg>
                     <h1>Student IA</h1>
                 </div>
-                <p class="login-subtitle">Tu asistente educativo inteligente</p>
+                <p class="login-subtitle">Crear una cuenta nueva</p>
             </div>
             
-            <div id="error-message" class="error-message" style="display: none;">
-                {% if error %}
-                    {{ error }}
-                {% endif %}
-            </div>
+            <div id="error-message" class="error-message" style="display: none;"></div>
             
-            <form id="login-form" class="login-form">
+            <form id="registro-form" class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre completo" required>
+                </div>
+                
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
                     <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-calendar"></i>
+                    <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" placeholder="Fecha de nacimiento">
                 </div>
                 
                 <div class="input-group">
@@ -40,20 +46,19 @@
                     <i class="fas fa-eye-slash toggle-password"></i>
                 </div>
                 
-                <div class="remember-forgot">
-                    <label>
-                        <input type="checkbox" name="remember"> Recordarme
-                    </label>
-                    <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirmar_password" name="confirmar_password" placeholder="Confirmar contraseña" required>
+                    <i class="fas fa-eye-slash toggle-password"></i>
                 </div>
                 
                 <button type="submit" class="login-button">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    <i class="fas fa-user-plus"></i> Registrarse
                 </button>
             </form>
             
             <div class="signup-link">
-                <p>¿No tienes una cuenta? <a href="/registro">Regístrate</a></p>
+                <p>¿Ya tienes una cuenta? <a href="/login">Iniciar sesión</a></p>
             </div>
         </div>
     </div>
@@ -61,32 +66,39 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Toggle para visualizar la contraseña
-            const togglePassword = document.querySelector('.toggle-password');
-            const passwordInput = document.querySelector('input[type="password"]');
-            
-            togglePassword.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
+            document.querySelectorAll('.toggle-password').forEach(function(toggle, index) {
+                toggle.addEventListener('click', function() {
+                    const passwordInput = this.previousElementSibling;
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
             });
             
-            // Mostrar mensaje de error si existe
-            const errorMessage = document.getElementById('error-message');
-            if (errorMessage.textContent.trim() !== '') {
-                errorMessage.style.display = 'block';
-            }
-            
-            // Manejar el formulario de login
-            const loginForm = document.getElementById('login-form');
-            loginForm.addEventListener('submit', function(e) {
+            // Manejar el formulario de registro
+            const registroForm = document.getElementById('registro-form');
+            registroForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.style.display = 'none';
+                
+                // Validar que las contraseñas coincidan
+                const password = document.getElementById('password').value;
+                const confirmarPassword = document.getElementById('confirmar_password').value;
+                
+                if (password !== confirmarPassword) {
+                    errorMessage.textContent = 'Las contraseñas no coinciden';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
                 
                 // Crear objeto con datos del formulario
-                const formData = new FormData(loginForm);
+                const formData = new FormData(registroForm);
+                formData.delete('confirmar_password'); // No enviar al servidor
                 
                 // Enviar datos al servidor
-                fetch('/login', {
+                fetch('/registro', {
                     method: 'POST',
                     body: formData
                 })
@@ -95,7 +107,7 @@
                     if (data.success) {
                         window.location.href = '/';
                     } else {
-                        errorMessage.textContent = data.error || 'Error al iniciar sesión';
+                        errorMessage.textContent = data.error || 'Error al registrar usuario';
                         errorMessage.style.display = 'block';
                     }
                 })

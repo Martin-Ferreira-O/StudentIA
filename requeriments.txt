@@ -1,6 +1,0 @@
-google-generativeai
-python-dotenv
-python-mermaid
-openai-whisper
-flask
-python-pptx

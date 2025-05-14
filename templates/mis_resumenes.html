@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student IA - Mis Resúmenes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/brain.png">
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        .resumenes-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .resumenes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .resumenes-title {
+            font-size: 28px;
+            color: var(--text-color);
+        }
+        
+        .resumenes-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .resumenes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .resumen-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .resumen-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .resumen-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        
+        .resumen-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        
+        .resumen-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .resumen-tag {
+            background-color: var(--accent-color-light);
+            color: var(--accent-color-dark);
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .resumen-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .resumen-action {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s ease;
+            padding: 5px;
+        }
+        
+        .resumen-action:hover {
+            color: var(--accent-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .empty-state i {
+            font-size: 50px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 24px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+        
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg viewBox="0 0 24 24" class="floating">
+                    <path d="M21.17,2.06A13.1,13.1,0,0,0,19,1.87a12.94,12.94,0,0,0-7,2.05,12.94,12.94,0,0,0-7-2,13.1,13.1,0,0,0-2.17.19,1,1,0,0,0-.83,1v12a1,1,0,0,0,1.17,1,10.84,10.84,0,0,1,8.83,8.83,1,1,0,0,0,1,1.17h0a1,1,0,0,0,1-1.17A10.84,10.84,0,0,1,22,14.17a1,1,0,0,0,.83-1v-11A1,1,0,0,0,21.17,2.06ZM12,18.15a12.87,12.87,0,0,0-2.89-4.26A12.94,12.94,0,0,0,5,10.74V4.15a10.94,10.94,0,0,1,3-.45,10.94,10.94,0,0,1,4,.74Zm9-7.41a12.87,12.87,0,0,0-4.26,2.89A12.94,12.94,0,0,0,13.8,17V4.15a10.94,10.94,0,0,1,4-.74,10.94,10.94,0,0,1,3.15.45Z"></path>
+                </svg>
+                <h1>Student IA</h1>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="login-link">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+                <a href="#" id="logout-link" class="login-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar sesión</span>
+                </a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Tema</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="resumenes-container">
+            <div class="resumenes-header">
+                <h2 class="resumenes-title">Mis Resúmenes</h2>
+                <div class="resumenes-actions">
+                    <a href="/" class="button">
+                        <i class="fas fa-plus"></i> Crear nuevo
+                    </a>
+                </div>
+            </div>
+            
+            {% if resumenes %}
+                <div class="resumenes-grid">
+                    {% for resumen in resumenes %}
+                        <div class="resumen-card" onclick="window.location.href='/resumen/{{ resumen.id }}'">
+                            <h3 class="resumen-title">{{ resumen.titulo }}</h3>
+                            <p class="resumen-info">
+                                <i class="far fa-calendar-alt"></i> {{ resumen.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}
+                            </p>
+                            <div class="resumen-tags">
+                                <span class="resumen-tag">{{ resumen.tipo_archivo }}</span>
+                                {% if resumen.contenido_resumen %}
+                                    <span class="resumen-tag">Resumen</span>
+                                {% endif %}
+                                {% if resumen.contenido_mapa %}
+                                    <span class="resumen-tag">Mapa conceptual</span>
+                                {% endif %}
+                                {% if resumen.contenido_quiz %}
+                                    <span class="resumen-tag">Quiz</span>
+                                {% endif %}
+                            </div>
+                            <div class="resumen-actions">
+                                <button class="resumen-action" title="Descargar" onclick="event.stopPropagation()">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="resumen-action" title="Eliminar" onclick="eliminarResumen({{ resumen.id }}, event)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>No tienes resúmenes guardados</h3>
+                    <p>Crea tu primer resumen para verlo aquí</p>
+                    <a href="/" class="button">
+                        <i class="fas fa-plus"></i> Crear resumen
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <footer>
+            <p>Desarrollado con <i class="fas fa-heart" style="color: var(--accent-color);"></i> por Student IA Team</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle tema oscuro/claro
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            
+            // Verificar si hay un tema guardado
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-theme');
+                themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+            }
+            
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-theme');
+                const isDark = body.classList.contains('dark-theme');
+                
+                // Guardar preferencia
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                
+                // Cambiar ícono
+                const icon = themeToggle.querySelector('i');
+                if (isDark) {
+                    icon.classList.replace('fa-moon', 'fa-sun');
+                } else {
+                    icon.classList.replace('fa-sun', 'fa-moon');
+                }
+            });
+            
+            // Manejar cierre de sesión
+            document.getElementById('logout-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                fetch('/logout')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/login';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+        
+        // Función para eliminar un resumen
+        function eliminarResumen(id, event) {
+            event.stopPropagation();
+            
+            if (confirm('¿Estás seguro de que deseas eliminar este resumen?')) {
+                fetch(`/resumen/${id}/eliminar`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Error al eliminar el resumen: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error de conexión');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
