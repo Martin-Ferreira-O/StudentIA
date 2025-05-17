@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página no encontrada - Student IA</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='error404.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/brain.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg viewBox="0 0 24 24" class="floating">
+                    <path d="M21.17,2.06A13.1,13.1,0,0,0,19,1.87a12.94,12.94,0,0,0-7,2.05,12.94,12.94,0,0,0-7-2,13.1,13.1,0,0,0-2.17.19,1,1,0,0,0-.83,1v12a1,1,0,0,0,1.17,1,10.84,10.84,0,0,1,8.83,8.83,1,1,0,0,0,1,1.17h0a1,1,0,0,0,1-1.17A10.84,10.84,0,0,1,22,14.17a1,1,0,0,0,.83-1v-11A1,1,0,0,0,21.17,2.06ZM12,18.15a12.87,12.87,0,0,0-2.89-4.26A12.94,12.94,0,0,0,5,10.74V4.15a10.94,10.94,0,0,1,3-.45,10.94,10.94,0,0,1,4,.74Zm9-7.41a12.87,12.87,0,0,0-4.26,2.89A12.94,12.94,0,0,0,13.8,17V4.15a10.94,10.94,0,0,1,4-.74,10.94,10.94,0,0,1,3.15.45Z"></path>
+                </svg>
+                <h1>Student IA</h1>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="login-link">
+                    <i class="fas fa-home"></i>
+                    <span>Inicio</span>
+                </a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                    <span>Tema</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="error-container">
+            <div class="error-illustration">
+                <i class="fas fa-compass"></i>
+            </div>
+            <h1 class="error-code">404</h1>
+            <h2 class="error-title">Página no encontrada</h2>
+            <p class="error-message">Lo sentimos, la página que estás buscando no existe o ha sido movida a otra ubicación.</p>
+            <div class="button-container">
+                <a href="/" class="button">
+                    <i class="fas fa-home"></i> Volver al inicio
+                </a>
+                {% if session.get('usuario_id') %}
+                <a href="/mis-resumenes" class="button">
+                    <i class="fas fa-folder"></i> Mis resúmenes
+                </a>
+                {% else %}
+                <a href="/login" class="button">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar sesión
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <footer>
+            <p>Desarrollado con <i class="fas fa-heart" style="color: var(--accent-color);"></i> por Student IA Team</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='error404.js') }}"></script>
+</body>
+</html> 

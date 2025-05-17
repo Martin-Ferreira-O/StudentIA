@@ -282,6 +282,11 @@ def eliminar_resumen(resumen_id):
     else:
         return jsonify({"success": False, "error": error})
 
+# Manejador de error 404 - Página no encontrada
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error404.html'), 404
+
 if __name__ == "__main__":
     if not os.path.exists("temp"):
         os.makedirs("temp")

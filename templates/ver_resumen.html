@@ -6,6 +6,7 @@
     <title>{{ resumen.titulo }} - Student IA</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='mermaid-custom.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/brain.png">
@@ -14,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/highlight.min.js"></script>
     <!-- Mermaid.js para mapas conceptuales -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script src="{{ url_for('static', filename='mermaid-handler.js') }}"></script>
     <style>
         .resumen-container {
             max-width: 1200px;
@@ -89,16 +91,120 @@
         }
         
         .mermaid-container {
-            padding: 20px;
+            padding: 30px;
             background-color: var(--card-bg);
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: auto;
+            margin-top: 20px;
+            width: 100%;
+            min-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .mermaid-container svg {
+            max-width: 100%;
+            height: auto !important;
+            width: auto !important;
+        }
+        
+        .mermaid-container .node rect,
+        .mermaid-container .node circle,
+        .mermaid-container .node ellipse,
+        .mermaid-container .node polygon {
+            fill: rgba(58, 134, 255, 0.2);
+            stroke: var(--primary-color);
+            stroke-width: 2px;
+        }
+        
+        .mermaid-container .edgeLabel {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .mermaid-container .edgePath .path {
+            stroke: var(--primary-color);
+            stroke-width: 2px;
+        }
+        
+        .mermaid-container .arrowheadPath {
+            fill: var(--primary-color);
+        }
+        
+        .mermaid-container .label {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+        
+        .dark-mode .mermaid-container .node rect,
+        .dark-mode .mermaid-container .node circle,
+        .dark-mode .mermaid-container .node ellipse,
+        .dark-mode .mermaid-container .node polygon {
+            fill: rgba(58, 134, 255, 0.15);
+            stroke: var(--primary-color);
+        }
+        
+        .dark-mode .mermaid-container .edgeLabel {
+            background-color: var(--card-bg);
+            color: var(--dark-text);
+        }
+        
+        .dark-mode .mermaid-container .label {
+            color: var(--dark-text);
+        }
+        
+        .mermaid-zoom-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .zoom-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .zoom-button:hover {
+            transform: scale(1.1);
+            background-color: var(--secondary-color);
+        }
+        
+        .mermaid-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-secondary);
+        }
+        
+        .mermaid-loading i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         .tab-actions {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             margin-bottom: 10px;
             gap: 10px;
         }
@@ -139,6 +245,13 @@
         
         .hidden {
             display: none;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -222,13 +335,28 @@
             {% if resumen.contenido_mapa %}
             <div id="mapa-content" class="tab-content">
                 <div class="tab-actions">
+                    <div class="mermaid-zoom-controls">
+                        <button class="zoom-button" id="zoom-in-btn" title="Acercar">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="zoom-button" id="zoom-out-btn" title="Alejar">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="zoom-button" id="zoom-reset-btn" title="Restablecer zoom">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
                     <button class="download-mermaid-btn button" title="Descargar SVG" id="download-mermaid-btn">
                         <i class="fas fa-download"></i> Descargar SVG
                     </button>
                 </div>
                 <div id="mermaid-diagram" class="mermaid-container">
-                    <!-- Se llenará con JavaScript -->
+                    <div class="mermaid-loading">
+                        <i class="fas fa-circle-notch"></i>
+                        <p>Cargando mapa conceptual...</p>
+                    </div>
                 </div>
+                <div id="mermaid-code" class="hidden">{{ resumen.contenido_mapa }}</div>
             </div>
             {% endif %}
             
@@ -253,45 +381,21 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar Mermaid
-            mermaid.initialize({
-                startOnLoad: true,
-                theme: document.body.classList.contains('dark-theme') ? 'dark' : 'default',
-                fontSize: 16,
-                fontFamily: 'Roboto, sans-serif',
-                securityLevel: 'loose'
-            });
-            
-            // Toggle tema oscuro/claro
             const themeToggle = document.getElementById('theme-toggle');
             const body = document.body;
             
-            // Verificar si hay un tema guardado
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 body.classList.add('dark-theme');
                 themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
-                mermaid.initialize({ theme: 'dark' });
             }
             
             themeToggle.addEventListener('click', function() {
                 body.classList.toggle('dark-theme');
                 const isDark = body.classList.contains('dark-theme');
                 
-                // Actualizar tema de Mermaid
-                mermaid.initialize({
-                    theme: isDark ? 'dark' : 'default'
-                });
-                
-                // Volver a renderizar el diagrama si está visible
-                if (document.getElementById('mapa-content').classList.contains('active')) {
-                    renderMermaidDiagram();
-                }
-                
-                // Guardar preferencia
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
                 
-                // Cambiar ícono
                 const icon = themeToggle.querySelector('i');
                 if (isDark) {
                     icon.classList.replace('fa-moon', 'fa-sun');
@@ -300,91 +404,49 @@
                 }
             });
             
-            // Cambiar entre pestañas
             const tabButtons = document.querySelectorAll('.tab-button');
             tabButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    // Remover clase active de todos los botones y contenidos
                     tabButtons.forEach(btn => btn.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(content => {
                         content.classList.remove('active');
                     });
                     
-                    // Activar la pestaña actual
                     this.classList.add('active');
                     const target = this.getAttribute('data-target');
                     document.getElementById(target).classList.add('active');
-                    
-                    // Si es la pestaña de mapa conceptual, renderizar el diagrama
-                    if (target === 'mapa-content') {
-                        renderMermaidDiagram();
-                    }
                 });
             });
             
-            // Renderizar markdown para el resumen
             {% if resumen.contenido_resumen %}
             const resumenMarkdown = document.getElementById('resumen-markdown');
             resumenMarkdown.innerHTML = marked.parse(`{{ resumen.contenido_resumen|replace("'", "\\'") }}`);
             {% endif %}
             
-            // Renderizar markdown para el quiz
             {% if resumen.contenido_quiz %}
             const quizMarkdown = document.getElementById('quiz-markdown');
             quizMarkdown.innerHTML = marked.parse(`{{ resumen.contenido_quiz|replace("'", "\\'") }}`);
             {% endif %}
             
-            // Renderizar diagrama Mermaid
             {% if resumen.contenido_mapa %}
-            function renderMermaidDiagram() {
-                const mermaidContainer = document.getElementById('mermaid-diagram');
-                mermaidContainer.innerHTML = '';
-                
-                try {
-                    const mermaidCode = `{{ resumen.contenido_mapa|replace("'", "\\'") }}`;
-                    mermaid.render('mermaid-diagram-svg', mermaidCode).then(result => {
-                        mermaidContainer.innerHTML = result.svg;
-                        
-                        // Configurar botón de descarga
-                        const downloadBtn = document.getElementById('download-mermaid-btn');
-                        downloadBtn.onclick = function() {
-                            const blob = new Blob([result.svg], {type: 'image/svg+xml'});
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'mapa_conceptual.svg';
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                            URL.revokeObjectURL(url);
-                        };
-                    });
-                } catch (error) {
-                    console.error('Error al renderizar el diagrama Mermaid:', error);
-                    mermaidContainer.innerHTML = '<div class="error-message">Error al generar el diagrama.</div>';
-                }
-            }
-            
-            // Iniciar diagrama Mermaid si es la pestaña activa
+            // Inicializar el renderizado del mapa conceptual si es la pestaña activa
             if (document.querySelector('.tab-button[data-target="mapa-content"]').classList.contains('active')) {
-                renderMermaidDiagram();
+                const mermaidCode = document.getElementById('mermaid-code').textContent;
+                renderMermaidDiagram(mermaidCode);
             }
             {% endif %}
         });
         
-        // Función para copiar texto al portapapeles
         function copiarTexto(contenedorId) {
             const contenedor = document.getElementById(contenedorId);
             let texto;
             
-            // Obtener el contenido según el tipo
             if (contenedorId === 'texto-content') {
                 texto = contenedor.querySelector('pre').textContent;
             } else {
                 texto = contenedor.querySelector('.markdown-content').innerText;
             }
             
-            // Crear elemento temporal para copiar
             const textArea = document.createElement('textarea');
             textArea.value = texto;
             document.body.appendChild(textArea);
@@ -392,7 +454,6 @@
             document.execCommand('copy');
             document.body.removeChild(textArea);
             
-            // Mostrar mensaje de éxito
             alert('Texto copiado al portapapeles');
         }
     </script>

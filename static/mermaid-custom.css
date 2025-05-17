@@ -1,0 +1,180 @@
+/* Estilos personalizados para los diagramas Mermaid */
+
+.mermaid-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    background-color: #f8f9fa;
+    padding: 32px 24px;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.dark-theme .mermaid-container {
+    background-color: #23272f;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+
+/* Estilos para los nodos */
+.mermaid-container .node rect,
+.mermaid-container .node circle,
+.mermaid-container .node ellipse,
+.mermaid-container .node polygon,
+.mermaid-container .node path {
+    stroke-width: 2px !important;
+    rx: 8px !important;
+    ry: 8px !important;
+}
+
+/* Estilos para las etiquetas de los nodos */
+.mermaid-container .label {
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    color: #333 !important;
+    fill: #333 !important;
+}
+
+.dark-theme .mermaid-container .label {
+    color: #e0e0e0 !important;
+    fill: #e0e0e0 !important;
+}
+
+/* Estilos para las conexiones */
+.mermaid-container .edgePath .path {
+    stroke-width: 2px !important;
+    stroke: #3a86ff !important;
+}
+
+.mermaid-container .edgeLabel {
+    background-color: transparent !important;
+    font-family: 'Roboto', sans-serif !important;
+    font-size: 14px !important;
+    color: #555 !important;
+    fill: #555 !important;
+}
+
+.dark-theme .mermaid-container .edgeLabel {
+    color: #ccc !important;
+    fill: #ccc !important;
+}
+
+/* Estilos para los clusters */
+.mermaid-container .cluster rect {
+    fill: rgba(58, 134, 255, 0.05) !important;
+    stroke: #3a86ff !important;
+    stroke-width: 1px !important;
+    rx: 8px !important;
+    ry: 8px !important;
+}
+
+.dark-theme .mermaid-container .cluster rect {
+    fill: rgba(58, 134, 255, 0.1) !important;
+}
+
+/* Estilos para las clases personalizadas */
+.mermaid-container .conceptoPrincipal > rect {
+    fill: rgba(255, 0, 153, 0.2) !important;
+    stroke: #ff0099 !important;
+    stroke-width: 2px !important;
+}
+
+.mermaid-container .concepto > rect {
+    fill: rgba(58, 134, 255, 0.2) !important;
+    stroke: #3a86ff !important;
+    stroke-width: 1px !important;
+}
+
+.mermaid-container .subconcepto > rect {
+    fill: rgba(131, 56, 236, 0.2) !important;
+    stroke: #8338ec !important;
+    stroke-width: 1px !important;
+}
+
+/* Estilos para el SVG */
+.mermaid-container svg {
+    max-width: 100% !important;
+    height: auto !important;
+    font-size: 16px !important;
+}
+
+/* Controles de zoom */
+.mermaid-zoom-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.zoom-button {
+    background-color: #3a86ff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+}
+
+.zoom-button:hover {
+    transform: scale(1.1);
+    background-color: #8338ec;
+}
+
+/* Indicador de carga */
+.mermaid-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #777;
+}
+
+.dark-theme .mermaid-loading {
+    color: #aaa;
+}
+
+.mermaid-loading i {
+    font-size: 40px;
+    margin-bottom: 15px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mensaje de error */
+.error-message {
+    color: #e74c3c;
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+}
+
+/* Botón de descarga */
+.download-mermaid-btn {
+    background-color: #3a86ff !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+}
+
+.download-mermaid-btn:hover {
+    background-color: #8338ec !important;
+} 

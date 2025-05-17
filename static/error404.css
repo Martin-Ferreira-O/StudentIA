@@ -1,0 +1,172 @@
+/* Estilos específicos para la página de error 404 */
+
+.error-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 40px 30px;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.error-code {
+    font-size: 150px;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin: 0;
+    line-height: 1;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, var(--accent-color), #9c88ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.error-title {
+    font-size: 32px;
+    color: var(--text-color);
+    margin: 20px 0;
+    font-weight: 600;
+}
+
+.error-message {
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    font-size: 18px;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.button-container {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.button-container .button {
+    padding: 12px 24px;
+    font-size: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.button-container .button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.error-illustration {
+    margin: 0 auto 40px;
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-illustration::before {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background-color: rgba(var(--accent-rgb), 0.1);
+    border-radius: 50%;
+    z-index: -1;
+    animation: pulse-bg 3s ease-in-out infinite;
+}
+
+@keyframes pulse-bg {
+    0% { transform: scale(0.8); opacity: 0.3; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+    100% { transform: scale(0.8); opacity: 0.3; }
+}
+
+.error-illustration i {
+    font-size: 100px;
+    color: var(--accent-color);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Decoraciones de fondo */
+.error-container::before,
+.error-container::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0.05;
+}
+
+.error-container::before {
+    background-color: var(--accent-color);
+    top: -100px;
+    left: -100px;
+}
+
+.error-container::after {
+    background-color: var(--accent-color);
+    bottom: -100px;
+    right: -100px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .error-code {
+        font-size: 120px;
+    }
+    
+    .error-title {
+        font-size: 26px;
+    }
+    
+    .error-message {
+        font-size: 16px;
+    }
+    
+    .error-illustration {
+        width: 160px;
+        height: 160px;
+    }
+    
+    .error-illustration i {
+        font-size: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-code {
+        font-size: 90px;
+    }
+    
+    .error-title {
+        font-size: 22px;
+    }
+    
+    .button-container {
+        flex-direction: column;
+    }
+    
+    .button-container .button {
+        width: 100%;
+    }
+} 
