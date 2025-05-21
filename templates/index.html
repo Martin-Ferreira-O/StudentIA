@@ -24,10 +24,22 @@
                 <h1>Student IA</h1>
             </div>
             <div class="header-actions">
+                {% if session['usuario_id'] %}
+                <form action="/logout" method="get" style="display:inline;">
+                    <button type="submit" class="login-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
+                <a href="/mis-resumenes" class="button" style="margin-left: 10px;">
+                    <i class="fas fa-folder-open"></i> Ver mis resúmenes
+                </a>
+                {% else %}
                 <a href="/login" class="login-link">
                     <i class="fas fa-user"></i>
                     <span>Iniciar sesión</span>
                 </a>
+                {% endif %}
                 <button id="theme-toggle" class="theme-toggle">
                     <i class="fas fa-moon"></i>
                     <span>Tema</span>
@@ -50,23 +62,6 @@
                         <option value="pptx">Presentación PowerPoint</option>
                         <option value="audio">Archivo de Audio</option>
                     </select>
-                    <div class="output-type">
-                        <label class="output-label">¿Qué deseas generar?</label>
-                        <div class="output-options">
-                            <label>
-                                <input type="radio" name="salida" value="resumen" checked>
-                                Resumen
-                            </label>
-                            <label>
-                                <input type="radio" name="salida" value="mapa">
-                                Mapa Conceptual
-                            </label>
-                            <label>
-                                <input type="radio" name="salida" value="quiz">
-                                Quiz
-                            </label>
-                        </div>
-                    </div>
                 </div>
                 
                 <button type="submit" id="submit-button" class="button" disabled>

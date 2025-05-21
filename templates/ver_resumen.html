@@ -17,24 +17,105 @@
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
     <script src="{{ url_for('static', filename='mermaid-handler.js') }}"></script>
     <style>
-        .resumen-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        :root {
+            --background: #f8f9fa; /* Gris muy claro para el fondo */
+            --text-color: #212529; /* Negro suave para texto principal */
+            --text-secondary: #6c757d; /* Gris para texto secundario */
+            --card-bg: #ffffff; /* Blanco para el fondo de las tarjetas */
+            --accent-color: #007bff; /* Azul primario de Bootstrap */
+            --accent-color-light: #e7f3ff; /* Azul muy claro para fondos de acento */
+            --accent-color-dark: #0056b3; /* Azul más oscuro para hover */
+            --border-color: #dee2e6; /* Gris claro para bordes */
+            --primary-color: #007bff;
+            --secondary-color: #0056b3; /* Un azul más oscuro o un color complementario */
+            --success-color: #28a745; /* Verde para éxito */
+            --danger-color: #dc3545; /* Rojo para peligro/error */
+            --warning-color: #ffc107; /* Amarillo para advertencias */
         }
-        
+        .dark-theme {
+            --background: #1a1a2e; /* Azul oscuro profundo para el fondo */
+            --text-color: #e0e0ff; /* Blanco lavanda muy claro para texto principal */
+            --text-secondary: #a0a0cc; /* Lavanda grisáceo para texto secundario */
+            --card-bg: #24243e; /* Azul oscuro ligeramente más claro para tarjetas */
+            --accent-color: #8a75ff; /* Lavanda brillante para acentos */
+            --accent-color-light: #30304a; /* Azul oscuro grisáceo para fondos de acento */
+            --accent-color-dark: #6040ff; /* Púrpura brillante para hover */
+            --border-color: #30304a; /* Mismo que accent-color-light para consistencia */
+            --primary-color: #8a75ff;
+            --secondary-color: #6040ff;
+            --success-color: #30d658; /* Verde brillante */
+            --danger-color: #ff4d6a; /* Rojo rosado brillante */
+            --warning-color: #ffcf40; /* Amarillo dorado brillante */
+        }
+        body {
+            background: var(--background);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 40px 18px 32px;
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .header-actions .login-link, .header-actions .button, .header-actions .theme-toggle {
+            background: var(--accent-color-light);
+            border: none;
+            border-radius: 22px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .header-actions .login-link:hover, .header-actions .button:hover, .header-actions .theme-toggle:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+        .header-actions .theme-toggle {
+            font-size: 1.1rem;
+        }
+        .resumen-container {
+            max-width: 1100px;
+            margin: 36px auto 0 auto;
+            padding: 0 24px 32px 24px;
+        }
         .resumen-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
-        
         .resumen-title {
-            font-size: 28px;
+            font-size: 2rem;
+            font-weight: 700;
             color: var(--text-color);
+            margin: 0;
         }
-        
+        .resumen-actions .button {
+            background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color-dark) 100%);
+            color: #fff;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(123, 92, 255, 0.08);
+        }
+        .resumen-actions .button:hover {
+            background: linear-gradient(90deg, var(--accent-color-dark) 0%, var(--accent-color) 100%);
+        }
         .resumen-meta {
             display: flex;
             align-items: center;
@@ -43,12 +124,6 @@
             color: var(--text-secondary);
             font-size: 14px;
         }
-        
-        .resumen-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
         .tab-buttons {
             display: flex;
             gap: 5px;
@@ -56,7 +131,6 @@
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 5px;
         }
-        
         .tab-button {
             background-color: transparent;
             border: none;
@@ -67,16 +141,13 @@
             transition: all 0.3s ease;
             font-weight: 500;
         }
-        
         .tab-button:hover {
             color: var(--accent-color);
         }
-        
         .tab-button.active {
             color: var(--accent-color);
             border-bottom: 2px solid var(--accent-color);
         }
-        
         .tab-content {
             display: none;
             padding: 20px;
@@ -84,12 +155,11 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            color: var(--text-color);
         }
-        
         .tab-content.active {
             display: block;
         }
-        
         .mermaid-container {
             padding: 30px;
             background-color: var(--card-bg);
@@ -103,13 +173,11 @@
             justify-content: center;
             align-items: center;
         }
-        
         .mermaid-container svg {
             max-width: 100%;
             height: auto !important;
             width: auto !important;
         }
-        
         .mermaid-container .node rect,
         .mermaid-container .node circle,
         .mermaid-container .node ellipse,
@@ -118,27 +186,37 @@
             stroke: var(--primary-color);
             stroke-width: 2px;
         }
-        
+        .mermaid-container .node .label {
+            font-weight: 500;
+            font-size: 15px;
+            color: var(--text-color) !important;
+        }
+        .mermaid-container .cluster rect {
+            fill: var(--accent-color-light) !important;
+            stroke: var(--accent-color) !important;
+            stroke-width: 1.5px;
+            stroke-dasharray: 4, 2;
+        }
+        .mermaid-container .cluster text {
+            font-weight: bold;
+            fill: var(--text-secondary) !important;
+        }
         .mermaid-container .edgeLabel {
             background-color: var(--card-bg);
             color: var(--text-color);
         }
-        
         .mermaid-container .edgePath .path {
             stroke: var(--primary-color);
             stroke-width: 2px;
         }
-        
         .mermaid-container .arrowheadPath {
             fill: var(--primary-color);
         }
-        
         .mermaid-container .label {
             font-family: 'Roboto', sans-serif;
             font-size: 16px;
             color: var(--text-color);
         }
-        
         .dark-mode .mermaid-container .node rect,
         .dark-mode .mermaid-container .node circle,
         .dark-mode .mermaid-container .node ellipse,
@@ -146,22 +224,28 @@
             fill: rgba(58, 134, 255, 0.15);
             stroke: var(--primary-color);
         }
-        
+        .dark-mode .mermaid-container .node .label {
+            color: var(--text-color) !important;
+        }
+        .dark-mode .mermaid-container .cluster rect {
+            fill: var(--accent-color-light) !important;
+            stroke: var(--accent-color) !important;
+        }
+        .dark-mode .mermaid-container .cluster text {
+            fill: var(--text-secondary) !important;
+        }
         .dark-mode .mermaid-container .edgeLabel {
             background-color: var(--card-bg);
             color: var(--dark-text);
         }
-        
         .dark-mode .mermaid-container .label {
             color: var(--dark-text);
         }
-        
         .mermaid-zoom-controls {
             display: flex;
             gap: 10px;
             margin-bottom: 10px;
         }
-        
         .zoom-button {
             background-color: var(--primary-color);
             color: white;
@@ -176,12 +260,10 @@
             font-size: 18px;
             transition: all 0.2s;
         }
-        
         .zoom-button:hover {
             transform: scale(1.1);
             background-color: var(--secondary-color);
         }
-        
         .mermaid-loading {
             display: flex;
             flex-direction: column;
@@ -190,25 +272,21 @@
             height: 200px;
             color: var(--text-secondary);
         }
-        
         .mermaid-loading i {
             font-size: 40px;
             margin-bottom: 15px;
             animation: spin 2s linear infinite;
         }
-        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
         .tab-actions {
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
             gap: 10px;
         }
-        
         .copy-button, .edit-button, .save-button {
             background: none;
             border: none;
@@ -218,35 +296,28 @@
             padding: 5px;
             transition: color 0.2s ease;
         }
-        
         .copy-button:hover, .edit-button:hover, .save-button:hover {
             color: var(--accent-color);
         }
-        
         .markdown-content {
             padding: 10px;
             line-height: 1.6;
         }
-        
         .markdown-content h1, .markdown-content h2, .markdown-content h3 {
             margin-top: 20px;
             margin-bottom: 10px;
             color: var(--text-color);
         }
-        
         .markdown-content p {
             margin-bottom: 15px;
         }
-        
         .markdown-content ul, .markdown-content ol {
             margin-left: 20px;
             margin-bottom: 15px;
         }
-        
         .hidden {
             display: none;
         }
-        
         .error-message {
             color: #e74c3c;
             text-align: center;
@@ -420,19 +491,41 @@
             
             {% if resumen.contenido_resumen %}
             const resumenMarkdown = document.getElementById('resumen-markdown');
-            resumenMarkdown.innerHTML = marked.parse(`{{ resumen.contenido_resumen|replace("'", "\\'") }}`);
+            resumenMarkdown.innerHTML = marked.parse(`{{ resumen.contenido_resumen|replace("'", "\\'")|replace("\n", "\\n") }}`);
             {% endif %}
             
             {% if resumen.contenido_quiz %}
             const quizMarkdown = document.getElementById('quiz-markdown');
-            quizMarkdown.innerHTML = marked.parse(`{{ resumen.contenido_quiz|replace("'", "\\'") }}`);
+            quizMarkdown.innerHTML = marked.parse(`{{ resumen.contenido_quiz|replace("'", "\\'")|replace("\n", "\\n") }}`);
             {% endif %}
             
             {% if resumen.contenido_mapa %}
             // Inicializar el renderizado del mapa conceptual si es la pestaña activa
-            if (document.querySelector('.tab-button[data-target="mapa-content"]').classList.contains('active')) {
-                const mermaidCode = document.getElementById('mermaid-code').textContent;
-                renderMermaidDiagram(mermaidCode);
+            const mapaTabButton = document.querySelector('.tab-button[data-target="mapa-content"]');
+            if (mapaTabButton && mapaTabButton.classList.contains('active')) {
+                const mermaidCodeElement = document.getElementById('mermaid-code');
+                if (mermaidCodeElement && typeof renderizarDiagramaMermaid !== 'undefined') {
+                    const mermaidCode = mermaidCodeElement.textContent;
+                    renderizarDiagramaMermaid(mermaidCode);
+                } else if (typeof renderizarDiagramaMermaid === 'undefined'){
+                    console.warn('renderizarDiagramaMermaid no está definida al cargar la pestaña activa del mapa.');
+                }
+            }
+            // Asegurarse de que el mapa se renderice cuando se cambie a la pestaña del mapa
+            if (mapaTabButton) {
+                mapaTabButton.addEventListener('click', function() {
+                    const mermaidCodeElement = document.getElementById('mermaid-code');
+                    const mermaidDiagramElement = document.getElementById('mermaid-diagram');
+                    if (mermaidCodeElement && mermaidDiagramElement && 
+                        (!mermaidDiagramElement.querySelector('svg') || mermaidDiagramElement.querySelector('.mermaid-loading'))) {
+                        if (typeof renderizarDiagramaMermaid !== 'undefined') {
+                            const mermaidCode = mermaidCodeElement.textContent;
+                            renderizarDiagramaMermaid(mermaidCode);
+                        } else {
+                            console.warn('renderizarDiagramaMermaid no está definida al hacer clic en la pestaña del mapa.');
+                        }
+                    }
+                });
             }
             {% endif %}
         });

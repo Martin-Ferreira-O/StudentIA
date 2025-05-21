@@ -109,8 +109,7 @@ def index():
     if request.method == "POST":
         archivo = request.files["archivo"]
         tipo_archivo = request.form.get("tipo_archivo")
-        salidas = request.form.getlist("salida")
-                
+        
         if tipo_archivo == "pptx":
             # Guardar archivo temporalmente
             ruta_temporal = os.path.join("temp", archivo.filename)
@@ -133,18 +132,14 @@ def index():
             return jsonify({"error": "Tipo de archivo no soportado"}), 400
 
         resultado = {"texto": texto}
+        # Siempre generar resumen, mapa y quiz
+        contenido_resumen = resumen_ia.send_resume()
+        resultado["resumen"] = contenido_resumen
+        mapa = resumen_ia.generate_concept_map()
+        resultado["mapa_conceptual"] = mapa
+        quiz = resumen_ia.generate_quiz()
+        resultado["quiz"] = quiz
         
-        if "resumen" in salidas:
-            contenido_resumen = resumen_ia.send_resume()
-            resultado["resumen"] = contenido_resumen
-        if "mapa" in salidas:
-            mapa = resumen_ia.generate_concept_map()
-            print("\n--- CÓDIGO MERMAID GENERADO ---\n", mapa, "\n------------------------------\n")
-            resultado["mapa_conceptual"] = mapa
-        if "quiz" in salidas:
-            quiz = resumen_ia.generate_quiz()
-            resultado["quiz"] = quiz
-            
         # Si el usuario está logueado, guardar el resumen en la base de datos
         usuario_id = session.get('usuario_id')
         if usuario_id:
@@ -164,7 +159,7 @@ def index():
 
         return jsonify(resultado)
 
-    return render_template("index.html")
+    return render_template("index.html", session=session)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

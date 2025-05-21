@@ -59,24 +59,22 @@ class Resumen:
     def generate_concept_map(self):
         # Enviar el contenido del archivo como mensaje al modelo para generar mapa conceptual con Mermaid
         print("Generando mapa conceptual.")
-        response = self.model.generate_content(f"""Se te entregará un archivo con un texto educativo. Tu trabajo será analizar el contenido, hacer un resumen corto, identificar las ideas principales y relaciones entre conceptos, y generar un mapa conceptual usando el lenguaje de diagramas Mermaid.
+        response = self.model.generate_content(f""" 
+Quiero que generes un mapa conceptual usando exclusivamente la sintaxis de Mermaid con flowchart TD.
 
-        INSTRUCCIONES IMPORTANTES:
-        1. SOLO DEBES RESPONDER EL CÓDIGO MERMAID, NO EL TEXTO. NO UN SALUDO. SOLO EL CÓDIGO MERMAID.
-        2. NO RESPONDAS ```mermaid al comienzo del código. NI PONGAS ``` al final.
-        3. SOLO EL CÓDIGO Y NADA MÁS.
-        4. Asegúrate de que el código mermaid esté bien formado, sin errores de sintaxis.
-        5. Dentro de los subgraph, no pueden haber símbolos extraños dentro de los nodos tales como ([]) o cualquier tipo de llave.
-        6. Usa colores para los nodos y las conexiones para mejorar la visualización.
-        7. Usa un tamaño de letra adecuado para que sea legible.
-        8. Usa un diseño claro y organizado.
-        9. INCLUYE ESTA CONFIGURACIÓN AL INICIO DEL CÓDIGO:
-        flowchart TD
-        classDef conceptoPrincipal fill:#f9f,stroke:#333,stroke-width:2px
-        classDef concepto fill:#bbf,stroke:#333,stroke-width:1px
-        classDef subconcepto fill:#ddf,stroke:#333,stroke-width:1px
+A continuación, te proporcionaré una clase o contenido. Tu tarea es identificar los conceptos clave y las relaciones entre ellos, y generar un código en formato Mermaid que represente un mapa conceptual, siguiendo estrictamente estas instrucciones:
 
-        El archivo es: \n{self.file_content}""")        
+1. Usa solo `flowchart TD` (dirección de arriba hacia abajo).
+2. Usa nodos rectangulares con corchetes: `A[Texto del concepto]`.
+3. Usa flechas simples para relaciones: `A --> B`.
+4. Puedes incluir texto en las relaciones: `A -->|relación| B`.
+5. No uses ningún otro tipo de sintaxis ni elementos adicionales de Mermaid. Esto significa:
+   - No uses rombos (`llaves`), estilos, íconos, ni subgrafos.
+   - No cambies la dirección (`LR`, `BT`, etc.).
+   - No incluyas títulos, comentarios, explicaciones, HTML ni etiquetas adicionales.
+6. La salida debe ser solamente el bloque de código Mermaid con sintaxis correcta, sin explicaciones antes o después.
+
+Aquí te dejo el contenido: \n{self.file_content}""")
         print(response.text)
         text_clean = self.limpiar_mermaid(response.text)
         print(text_clean)

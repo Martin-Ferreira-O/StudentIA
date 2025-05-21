@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const quizTab = document.getElementById('quiz-tab');
   const quizContent = document.getElementById('quiz-content');
   const quizContainer = document.getElementById('quiz-container');
-  const outputRadios = document.querySelectorAll('input[name="salida"]');
   
   // Variables para el contenido del resumen
   let resumenOriginal = '';
@@ -407,56 +406,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // Mostrar/ocultar pestañas según selección
-  function actualizarPestanas() {
-    let salida = document.querySelector('input[name="salida"]:checked').value;
-    // Ocultar todas
-    resumenTab.style.display = 'none';
-    mapaTab.style.display = 'none';
-    quizTab.style.display = 'none';
-    document.getElementById('resumen-content').style.display = 'none';
-    document.getElementById('mapa-content').style.display = 'none';
-    quizContent.style.display = 'none';
-    // Mostrar solo la seleccionada
-    if (salida === 'resumen') {
-      resumenTab.style.display = '';
-      resumenTab.classList.add('active');
-      mapaTab.classList.remove('active');
-      quizTab.classList.remove('active');
-      document.getElementById('resumen-content').style.display = '';
-      document.getElementById('resumen-content').classList.add('active');
-      document.getElementById('mapa-content').classList.remove('active');
-      quizContent.classList.remove('active');
-    } else if (salida === 'mapa') {
-      mapaTab.style.display = '';
-      mapaTab.classList.add('active');
-      resumenTab.classList.remove('active');
-      quizTab.classList.remove('active');
-      document.getElementById('mapa-content').style.display = '';
-      document.getElementById('mapa-content').classList.add('active');
-      document.getElementById('resumen-content').classList.remove('active');
-      quizContent.classList.remove('active');
-    } else if (salida === 'quiz') {
-      quizTab.style.display = '';
-      quizTab.classList.add('active');
-      resumenTab.classList.remove('active');
-      mapaTab.classList.remove('active');
-      quizContent.style.display = '';
-      quizContent.classList.add('active');
-      document.getElementById('resumen-content').classList.remove('active');
-      document.getElementById('mapa-content').classList.remove('active');
-    }
-  }
-  outputRadios.forEach(rb => rb.addEventListener('change', actualizarPestanas));
-  document.addEventListener('DOMContentLoaded', actualizarPestanas);
-  
   // Manejar envío del formulario
   uploadForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new FormData(this);
-    // Solo una salida
-    const salida = document.querySelector('input[name="salida"]:checked').value;
-    formData.append('salida', salida);
     // Mostrar pantalla de carga
     uploadForm.style.display = 'none';
     loaderContainer.style.display = 'flex';
@@ -472,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
         aiLoader.style.display = 'none';
         resultadoContainer.style.display = 'block';
         renderText(document.getElementById('texto-content'), data.texto);
-        // Mostrar solo la pestaña seleccionada
+        // Mostrar todas las pestañas generadas
         if (data.resumen) {
           resumenTab.style.display = '';
           renderText(document.getElementById('resumen-content'), data.resumen, true);
@@ -483,7 +436,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data.mapa_conceptual) {
           mapaTab.style.display = '';
           renderMermaidDiagram(document.getElementById('mapa-content'), data.mapa_conceptual);
-          document.getElementById('resumen-raw').textContent = data.mapa_conceptual;
         } else {
           mapaTab.style.display = 'none';
         }
@@ -494,7 +446,20 @@ document.addEventListener('DOMContentLoaded', function() {
           quizTab.style.display = 'none';
           quizContainer.innerHTML = '';
         }
-        actualizarPestanas();
+        // Activar la pestaña de resumen por defecto si existe, si no la de texto
+        if (data.resumen) {
+          resumenTab.classList.add('active');
+          document.getElementById('resumen-content').classList.add('active');
+          mapaTab.classList.remove('active');
+          quizTab.classList.remove('active');
+          document.getElementById('mapa-content').classList.remove('active');
+          quizContent.classList.remove('active');
+        } else {
+          resumenTab.classList.remove('active');
+          document.getElementById('resumen-content').classList.remove('active');
+          // Si no hay resumen, mostrar texto original
+          document.getElementById('texto-content').classList.add('active');
+        }
       }, 2000);
     })
     .catch(error => {
