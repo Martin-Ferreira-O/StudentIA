@@ -1,6 +1,6 @@
 # app.py
 import os
-from flask import Flask, request, render_template, jsonify, session
+from flask import Flask, request, render_template, jsonify, session, send_file
 from pptx import Presentation
 import whisper
 from datetime import datetime
@@ -9,8 +9,11 @@ from models import Usuario, Resumen
 from database_manager import UsuarioManager, ResumenManager
 from flask.cli import with_appcontext
 import click
+import io
+import requests
 
 from ia import Resumen as ResumenIA
+from utils.generateImageMermaid import generateImageMermaid
 
 # Función para crear tablas de BD
 def crear_tablas_bd():
@@ -276,6 +279,39 @@ def eliminar_resumen(resumen_id):
         return jsonify({"success": True})
     else:
         return jsonify({"success": False, "error": error})
+
+@app.route('/mapa-conceptual-imagen/<int:resumen_id>')
+def generar_imagen_mapa_conceptual(resumen_id):
+    # Verificar si el usuario está logueado (opcional, pero bueno para consistencia)
+    usuario_id = session.get('usuario_id')
+    if not usuario_id:
+        # Podrías retornar un error 401 o una imagen de placeholder
+        return "Acceso no autorizado", 401
+
+    resumen = ResumenManager.obtener_resumen_por_id(resumen_id)
+
+    if not resumen or resumen.usuario_id != usuario_id:
+        # Podrías retornar un error 404 o una imagen de placeholder
+        return "Resumen no encontrado o no tienes permisos", 404
+
+    if resumen and resumen.contenido_mapa:
+        try:
+            # generateImageMermaid ahora devuelve un objeto BytesIO directamente
+            img_io = generateImageMermaid(resumen.contenido_mapa)
+            
+            # No es necesario crear un nuevo BytesIO ni guardar la imagen PIL aquí
+            # img_io ya está listo para ser enviado
+            
+            return send_file(img_io, mimetype='image/png')
+        except requests.exceptions.RequestException as e:
+            print(f"Error al contactar mermaid.ink: {e}")
+            return "Error al obtener la imagen del servicio externo", 502 # Bad Gateway
+        except Exception as e:
+            print(f"Error generando imagen del mapa: {e}") 
+            return "Error al generar la imagen del mapa", 500 
+    else:
+        # Considera retornar una imagen de placeholder o un código de estado HTTP adecuado
+        return "Contenido del mapa no disponible", 404
 
 # Manejador de error 404 - Página no encontrada
 @app.errorhandler(404)

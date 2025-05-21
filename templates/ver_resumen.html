@@ -6,16 +6,12 @@
     <title>{{ resumen.titulo }} - Student IA</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='mermaid-custom.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/brain.png">
     <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/atom-one-dark.min.css">
     <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/highlight.min.js"></script>
-    <!-- Mermaid.js para mapas conceptuales -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
-    <script src="{{ url_for('static', filename='mermaid-handler.js') }}"></script>
     <style>
         :root {
             --background: #f8f9fa; /* Gris muy claro para el fondo */
@@ -324,6 +320,23 @@
             padding: 20px;
             font-size: 16px;
         }
+        .map-image-container {
+            padding: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto; /* Para permitir scroll si la imagen es muy grande */
+        }
+        .map-image-container img {
+            max-width: 100%;
+            max-height: 80vh; /* Limitar altura para que no sea excesiva */
+            height: auto;
+            border-radius: 5px; /* Opcional: bordes redondeados para la imagen */
+        }
     </style>
 </head>
 <body>
@@ -406,28 +419,10 @@
             {% if resumen.contenido_mapa %}
             <div id="mapa-content" class="tab-content">
                 <div class="tab-actions">
-                    <div class="mermaid-zoom-controls">
-                        <button class="zoom-button" id="zoom-in-btn" title="Acercar">
-                            <i class="fas fa-search-plus"></i>
-                        </button>
-                        <button class="zoom-button" id="zoom-out-btn" title="Alejar">
-                            <i class="fas fa-search-minus"></i>
-                        </button>
-                        <button class="zoom-button" id="zoom-reset-btn" title="Restablecer zoom">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
                     </div>
-                    <button class="download-mermaid-btn button" title="Descargar SVG" id="download-mermaid-btn">
-                        <i class="fas fa-download"></i> Descargar SVG
-                    </button>
+                <div class="map-image-container">
+                    <img src="{{ url_for('generar_imagen_mapa_conceptual', resumen_id=resumen.id) }}" alt="Mapa Conceptual de {{ resumen.titulo }}">
                 </div>
-                <div id="mermaid-diagram" class="mermaid-container">
-                    <div class="mermaid-loading">
-                        <i class="fas fa-circle-notch"></i>
-                        <p>Cargando mapa conceptual...</p>
-                    </div>
-                </div>
-                <div id="mermaid-code" class="hidden">{{ resumen.contenido_mapa }}</div>
             </div>
             {% endif %}
             
@@ -497,36 +492,6 @@
             {% if resumen.contenido_quiz %}
             const quizMarkdown = document.getElementById('quiz-markdown');
             quizMarkdown.innerHTML = marked.parse(`{{ resumen.contenido_quiz|replace("'", "\\'")|replace("\n", "\\n") }}`);
-            {% endif %}
-            
-            {% if resumen.contenido_mapa %}
-            // Inicializar el renderizado del mapa conceptual si es la pestaña activa
-            const mapaTabButton = document.querySelector('.tab-button[data-target="mapa-content"]');
-            if (mapaTabButton && mapaTabButton.classList.contains('active')) {
-                const mermaidCodeElement = document.getElementById('mermaid-code');
-                if (mermaidCodeElement && typeof renderizarDiagramaMermaid !== 'undefined') {
-                    const mermaidCode = mermaidCodeElement.textContent;
-                    renderizarDiagramaMermaid(mermaidCode);
-                } else if (typeof renderizarDiagramaMermaid === 'undefined'){
-                    console.warn('renderizarDiagramaMermaid no está definida al cargar la pestaña activa del mapa.');
-                }
-            }
-            // Asegurarse de que el mapa se renderice cuando se cambie a la pestaña del mapa
-            if (mapaTabButton) {
-                mapaTabButton.addEventListener('click', function() {
-                    const mermaidCodeElement = document.getElementById('mermaid-code');
-                    const mermaidDiagramElement = document.getElementById('mermaid-diagram');
-                    if (mermaidCodeElement && mermaidDiagramElement && 
-                        (!mermaidDiagramElement.querySelector('svg') || mermaidDiagramElement.querySelector('.mermaid-loading'))) {
-                        if (typeof renderizarDiagramaMermaid !== 'undefined') {
-                            const mermaidCode = mermaidCodeElement.textContent;
-                            renderizarDiagramaMermaid(mermaidCode);
-                        } else {
-                            console.warn('renderizarDiagramaMermaid no está definida al hacer clic en la pestaña del mapa.');
-                        }
-                    }
-                });
-            }
             {% endif %}
         });
         
